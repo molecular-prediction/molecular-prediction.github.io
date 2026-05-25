@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GNR 智能切割与预测系统 (GNR Pipeline) - 项目介绍">
+  <title>GNR 智能切割与预测系统 | 项目主页</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --surface: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: #e2e8f0;
+      --accent-main: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #eff6ff;
+      --secondary-accent: #059669;
+      --max-width: 1100px;
+      --radius: 16px;
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text-primary);
+      background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.05) 0px, transparent 50%);
+      background-attachment: fixed;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(var(--max-width), 92%);
+      margin: 0 auto;
+    }
+
+    /* Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .brand span { color: var(--accent-main); }
+    .nav-links a {
+      margin-left: 1.5rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent-main); }
+
+    /* Hero Section */
+    .hero {
+      padding: 6rem 0 4rem;
+      text-align: center;
+    }
+    .version-tag {
+      display: inline-block;
+      padding: 0.35rem 0.8rem;
+      background: var(--accent-light);
+      color: var(--accent-main);
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 1.5rem 0;
+      letter-spacing: -0.03em;
+    }
+    .hero p.lead {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin: 0 auto 2.5rem;
+    }
+    .authors {
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+    }
+    .authors .affil {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary {
+      background: var(--accent-main);
+      color: white;
+      box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+    .btn-outline:hover {
+      background: var(--surface);
+      border-color: var(--text-primary);
+    }
+
+    /* Sections */
+    section { padding: 4rem 0; }
+    .section-header {
+      margin-bottom: 3rem;
+    }
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
+      letter-spacing: -0.02em;
+    }
+    .section-header p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0;
+    }
+
+    /* Abstract Card */
+    .abstract-card {
+      background: var(--surface);
+      padding: 2.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-primary);
+      border-left: 4px solid var(--accent-main);
+    }
+
+    /* Grid Layouts */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-light);
+      color: var(--accent-main);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.25rem;
+    }
+    .feature-card p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Methodology Steps */
+    .method-step {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .step-number {
+      background: var(--text-primary);
+      color: white;
+      width: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    .step-content {
+      padding: 2rem;
+      flex: 1;
+    }
+    .step-content h3 {
+      margin: 0 0 0.5rem 0;
+      color: var(--accent-main);
+    }
+    .step-content p {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+    .code-snippet {
+      font-family: 'Fira Code', monospace;
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #334155;
+      margin-top: 1rem;
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
+    }
+
+    /* Qualitative Examples */
+    .example-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .example-panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .example-img {
+        background: #f8fafc;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid var(--border-color);
+        color: #94a3b8;
+        font-style: italic;
+        padding: 1rem; /* 新增：四周留出一些内边距 */
+      }
+
+      /* 【关键新增】专门针对容器内的图片设置缩放规则 */
+      .example-img img {
+        width: 100%;          /* 允许图片宽度最大撑满容器 */
+        height: 100%;         /* 允许图片高度最大撑满容器 */
+        object-fit: contain;  /* 核心属性：保持原有宽高比缩放图片，确保整张图片完整显示在容器内，不会被拉伸或裁剪 */
+      }
+    .example-info {
+      padding: 1.5rem;
+      flex: 1;
+    }
+    .example-info h4 { margin: 0 0 0.5rem 0; }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+    .badge.success { background: #dcfce7; color: #166534; }
+
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding: 4rem 0 2rem; }
+      .example-grid { grid-template-columns: 1fr; }
+      .method-step { flex-direction: column; }
+      .step-number { width: 100%; height: 60px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-inner">
+      <a href="#" class="brand">GNR <span>Pipeline</span></a>
+      <nav class="nav-links">
+        <a href="#abstract">项目摘要</a>
+        <a href="#features">核心特性</a>
+        <a href="#methodology">算法架构</a>
+        <a href="#examples">分析示例</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <h1>石墨烯纳米带 (GNR)<br>智能切割与分析系统</h1>
+      <p class="lead">
+        基于图论与周期性边界条件的化学分子拓扑切割框架，自动生成完美边缘构型，并集成大语言模型 (LLM) 进行自动化化学合理性评判。
+      </p>
+      <div class="authors">
+        <strong>TH.Xie, XY.Li, LK.Zuo</strong><br>
+        <span class="affil">Tongji University</span>
+        <span class="affil">Mentors: Ma Lei, Song Shaotang</span>
+      </div>
+      <div class="btn-group">
+        <a href="https://github.com/molecular-prediction/predict" class="btn btn-primary">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          查看源码
+        </a>
+        <a href="#methodology" class="btn btn-outline">了解算法实现</a>
+      </div>
+    </section>
+
+    <section id="abstract" class="container">
+      <div class="section-header">
+        <h2>项目摘要 (Abstract)</h2>
+      </div>
+      <div class="abstract-card">
+        在材料科学与计算化学领域，石墨烯纳米带 (GNR) 的边缘构型直接决定其电子与拓扑性质。本项目 (GNR Pipeline) 提出了一个免训练的自动化处理框架，用于从复杂的二维多环芳烃分子网络中，智能推演并切割出结构合法的聚合单体。
+        <br><br>
+        在全新的 v2.0 版本中，我们引入了<b>周期性边界条件映射</b>，使得切割路径能够跨越图块边界，模拟无限延伸石墨烯上的斜向切割。配合严格的三维<b>边缘几何约束规则</b>（顶层约束、底层约束、侧边双向约束），系统能够精确处理 Ullmann 主链与 Scholl 海湾的封端逻辑（例如完美生成 1,5-二溴 的 4 种甲基异构体）。同时，项目原生集成了 <b>OpenAI LLM 驱动的 SMILES 智能评判</b>，形成了一条从几何图论分割到化学合理性验证的完整流水线。
+      </div>
+    </section>
+
+    <section id="features" class="container">
+      <div class="section-header">
+        <h2>核心研究亮点 (Highlights)</h2>
+        <p>本项目不仅解决了长斜向路径搜索中断的痛点，更在化学物理意义上保证了产物的严谨性。</p>
+      </div>
+      <div class="grid-3">
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>周期性跨边界切割</h3>
+          <p>突破传统固定宽度 (k值) 的图块限制。引入逻辑邻居映射与全局坐标位移，支持路径从图块左边缘穿出并自动从右边缘穿入，实现长程斜向拓扑切割的完美模拟。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📐</div>
+          <h3>严苛的边缘几何约束</h3>
+          <p>实施三级拓扑管控：强制顶层起始且禁止首步横移；触底即停禁止底层横切；引入双向侧边封锁，杜绝破坏边缘苯环化学稳定性的非法横向切割。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>自动化封端与 LLM 验证</h3>
+          <p>利用 RDKit 解析化学真理：智能分配 Alpha/Beta 键并穷举 4 种甲基异构体。内置 OpenAI 接口，自动对生成的骨架与封端 SMILES 进行化学合理性推理判断。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="methodology" class="container">
+      <div class="section-header">
+        <h2>算法工作流 (Pipeline Architecture)</h2>
+        <p>从输入的原始分子到最终的单体数据，GNR Pipeline 包含以下四个核心阶段：</p>
+      </div>
+      
+      <div class="method-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>分子坐标系重建与网格化 (Graph Mapping)</h3>
+          <p>读取输入的 SMILES (例如 <code>gnr_7ac_segment.smi</code>)，利用 RDKit 获取二维构象坐标。提取所有的六元环 (SSSR)，建立基于坐标的物理邻接图 (Adjacency Graph)，并将分子划分为具有行列属性的蜂窝网格 (BenzeneHex Grid)。</p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>动态路径寻优 (Edge Cutting Path Finder)</h3>
+          <p>结合 parity (奇偶行) 动态学习合法的蜂窝移动偏移量。在深度优先搜索 (DFS) 中，应用边缘约束规则筛选合法节点，并在模板图块中搜索所有的有效切割拓扑路径。</p>
+          <div class="code-snippet">
+            target_r = curr_h.row + r_off<br>
+            target_c = curr_h.relative_col + c_off<br>
+            wrapped_c = target_c % self.k_cols # 周期性取模，实现跨越边界
+          </div>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>智能封端与异构体生成 (Capping & Generation)</h3>
+          <p>依据全局切割方案将模板路径应用至全分子。定位所有向外的断键，建立局部相对坐标系以抵抗分子整体倾斜。区分 Alpha 键（连接桥头碳）与 Beta 键，自动装配溴 (Br) 和甲基 (C)，输出多种有效的化学异构体。</p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3>LLM 智能评判与可视化 (Judgement & Visualization)</h3>
+          <p>调用 matplotlib 生成切割路径高亮图（被剔除的苯环标红，切割线加粗）。随后，驱动 OpenAI 大模型读取 Capped SMILES 字符串，评估生成分子的稳定性与合理性，输出状态报告。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="examples" class="container">
+      <div class="section-header">
+        <h2>数据输出示例 (Qualitative Examples)</h2>
+      </div>
+      <div class="example-grid">
+        <div class="example-panel">
+          <div class="example-img">
+              <img src="source/photo/cut_method_k2_v1.png">
+          </div>
+          <div class="example-info">
+            <h4>可视化切割方案 (K=2)</h4>
+            <span class="badge">Graph Theory</span>
+            <span class="badge">Matplotlib</span>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 1rem;">
+              图块宽度 K=2。红色区域代表被算法判定并移除的苯环节点，红线表示跨越整个大分子的全局切割连线，完美契合周期性边界条件。
+            </p>
+          </div>
+        </div>
+        
+        <div class="example-panel">
+          <div class="example-img">
+              <img src="source/photo/cut_method_k2_v1_monomer_1.png">
+          </div>
+          <div class="example-info">
+            <h4>封端分子输出 (Capped Monomer)</h4>
+            <span class="badge success">RDKit</span>
+            <span class="badge success">SMILES</span>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 1rem;">
+              基于局部坐标系抗偏转逻辑，系统成功识别 Alpha/Beta 断键，在对应位置自动添加 Br 与 C，并经过 RDKit Sanitize 验证，输出高纯度的 SMILES 代码以供后续模拟。
+            </p>
+            <div class="code-snippet" style="margin-top: 0.5rem; padding: 0.5rem; font-size: 0.75rem;">
+                CC1=C(C(Br)=CC=C2C)C2=C(Br)C=C1
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 molecular-prediction @ Tongji University. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
